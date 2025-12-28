@@ -4,10 +4,14 @@
     {
       "src": "package.json",
       "use": "@vercel/static-build",
-      "config": { "distDir": "dist" }
+      "config": { "distDir": "dist" },
+      "buildEnv": {
+        "VITE_SUPABASE_URL": "@VITE_SUPABASE_URL",
+        "VITE_SUPABASE_PUBLISHABLE_KEY": "@VITE_SUPABASE_PUBLISHABLE_KEY",
+        "VITE_SUPABASE_PROJECT_ID": "@VITE_SUPABASE_PROJECT_ID"
+      }
     }
-  ]
-  ,
+  ],
   "routes": [
     { "handle": "filesystem" },
     { "src": "/(.*)", "dest": "/index.html" }
