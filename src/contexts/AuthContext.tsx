@@ -30,6 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const supabaseReady = !!supabase;
 
   const fetchUserRoles = async (userId: string): Promise<AppRole[]> => {
     const { data, error } = await supabase
@@ -75,6 +76,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
+    if (!supabaseReady) {
+      console.warn('Supabase client not initialized. Auth features disabled.');
+      setIsLoading(false);
+      return;
+    }
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, newSession) => {
@@ -109,6 +115,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string) => {
+    if (!supabaseReady) {
+      throw new Error('Supabase is not configured. Please refresh the page or contact support.');
+    }
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password
@@ -125,6 +134,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const register = async (email: string, password: string, role: 'guest' | 'host', name: string, phone?: string) => {
+    if (!supabaseReady) {
+      throw new Error('Supabase is not configured. Please refresh the page or contact support.');
+    }
     const redirectUrl = `${window.location.origin}/`;
 
     const { data, error } = await supabase.auth.signUp({
@@ -193,6 +205,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
+    if (!supabaseReady) return;
     await supabase.auth.signOut();
     setUser(null);
     setSession(null);
