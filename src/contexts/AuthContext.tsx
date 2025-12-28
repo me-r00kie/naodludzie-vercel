@@ -17,6 +17,7 @@ interface AuthContextType {
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, role: 'guest' | 'host', name: string, phone?: string) => Promise<void>;
+  recoverPassword: (email: string) => Promise<void>;
   logout: () => Promise<void>;
   hasRole: (role: AppRole) => boolean;
   isAdmin: boolean;
@@ -176,6 +177,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const recoverPassword = async (email: string) => {
+    // Direct the user to the single-page app reset route (hash router)
+    const redirectUrl = `${window.location.origin}/#/reset-password`;
+
+    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: redirectUrl,
+    });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return data;
+  };
+
   const logout = async () => {
     await supabase.auth.signOut();
     setUser(null);
@@ -196,6 +212,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isLoading, 
       login, 
       register, 
+      recoverPassword,
       logout, 
       hasRole,
       isAdmin,

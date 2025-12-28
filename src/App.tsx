@@ -10,6 +10,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 const Index = lazy(() => import("./pages/Index"));
 const CabinDetail = lazy(() => import("./pages/CabinDetail"));
 const Auth = lazy(() => import("./pages/Auth"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const HostDashboard = lazy(() => import("./pages/HostDashboard"));
 const HostOnboarding = lazy(() => import("./pages/HostOnboarding"));
 const HostTerms = lazy(() => import("./pages/HostTerms"));
@@ -47,6 +48,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/cabin/:slug" element={<CabinDetail />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/host/dashboard" element={<HostDashboard />} />
               <Route path="/host/onboarding" element={<HostOnboarding />} />
               <Route path="/host/add-cabin" element={<AddCabin />} />

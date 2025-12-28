@@ -34,9 +34,10 @@ const registerSchema = z.object({
 const AuthPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { user, login, register } = useAuth();
+  const { user, login, register, recoverPassword } = useAuth();
   
   const [isRegister, setIsRegister] = useState(searchParams.get('register') === 'true');
+  const [isRecover, setIsRecover] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   
@@ -127,6 +128,28 @@ const AuthPage = () => {
     }
   };
 
+  const handleRecover = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrors({});
+    setIsLoading(true);
+    try {
+      const result = z.string().email('Nieprawidłowy adres email').safeParse(formData.email);
+      if (!result.success) {
+        setErrors({ email: 'Nieprawidłowy adres email' });
+        setIsLoading(false);
+        return;
+      }
+
+      await recoverPassword(formData.email);
+      toast({ title: 'Sprawdź email', description: 'Wysłaliśmy link do resetu hasła.' });
+      setIsRecover(false);
+    } catch (err) {
+      toast({ title: 'Błąd', description: err instanceof Error ? err.message : 'Nie udało się wysłać emaila', variant: 'destructive' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
@@ -167,122 +190,156 @@ const AuthPage = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                {isRegister && (
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Imię</Label>
-                    <Input
-                      id="name"
-                      name="name"
-                      type="text"
-                      placeholder="Jan Kowalski"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      className={errors.name ? 'border-destructive' : ''}
-                    />
-                    {errors.name && (
-                      <p className="text-sm text-destructive">{errors.name}</p>
+              <form onSubmit={isRecover ? handleRecover : handleSubmit} className="space-y-4">
+                {isRecover ? (
+                  <>
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        placeholder="jan@example.com"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        className={errors.email ? 'border-destructive' : ''}
+                      />
+                      {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
+                    </div>
+
+                    <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+                      {isLoading ? 'Wysyłam...' : 'Wyślij link do resetu hasła'}
+                    </Button>
+
+                    <div className="mt-4 text-center">
+                      <button type="button" className="text-sm text-primary hover:underline" onClick={() => setIsRecover(false)}>Wróć</button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {isRegister && (
+                      <div className="space-y-2">
+                        <Label htmlFor="name">Imię</Label>
+                        <Input
+                          id="name"
+                          name="name"
+                          type="text"
+                          placeholder="Jan Kowalski"
+                          value={formData.name}
+                          onChange={handleInputChange}
+                          className={errors.name ? 'border-destructive' : ''}
+                        />
+                        {errors.name && (
+                          <p className="text-sm text-destructive">{errors.name}</p>
+                        )}
+                      </div>
                     )}
-                  </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        placeholder="jan@example.com"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        className={errors.email ? 'border-destructive' : ''}
+                      />
+                      {errors.email && (
+                        <p className="text-sm text-destructive">{errors.email}</p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="password">Hasło</Label>
+                      <Input
+                        id="password"
+                        name="password"
+                        type="password"
+                        placeholder="••••••••"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        className={errors.password ? 'border-destructive' : ''}
+                      />
+                      {errors.password && (
+                        <p className="text-sm text-destructive">{errors.password}</p>
+                      )}
+                    </div>
+
+                    {isRegister && (
+                      <div className="space-y-2">
+                        <Label htmlFor="phone" className="flex items-center gap-2">
+                          <Phone className="w-4 h-4" />
+                          Telefon (opcjonalnie)
+                        </Label>
+                        <Input
+                          id="phone"
+                          name="phone"
+                          type="tel"
+                          placeholder="+48 123 456 789"
+                          value={formData.phone}
+                          onChange={handleInputChange}
+                        />
+                      </div>
+                    )}
+
+                    {isRegister && (
+                      <div className="space-y-3">
+                        <Label>Wybierz typ konta</Label>
+                        <RadioGroup
+                          value={formData.role}
+                          onValueChange={(value) => setFormData(prev => ({ ...prev, role: value as 'guest' | 'host' }))}
+                          className="grid grid-cols-2 gap-4"
+                        >
+                          <Label
+                            htmlFor="guest"
+                            className={`flex flex-col items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-colors ${
+                              formData.role === 'guest'
+                                ? 'border-primary bg-primary/5'
+                                : 'border-border hover:border-primary/50'
+                            }`}
+                          >
+                            <RadioGroupItem value="guest" id="guest" className="sr-only" />
+                            <User className="w-8 h-8 mb-2 text-muted-foreground" />
+                            <span className="font-medium">Gość</span>
+                            <span className="text-xs text-muted-foreground text-center mt-1">
+                              Chcę rezerwować domki
+                            </span>
+                          </Label>
+                          <Label
+                            htmlFor="host"
+                            className={`flex flex-col items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-colors ${
+                              formData.role === 'host'
+                                ? 'border-primary bg-primary/5'
+                                : 'border-border hover:border-primary/50'
+                            }`}
+                          >
+                            <RadioGroupItem value="host" id="host" className="sr-only" />
+                            <Home className="w-8 h-8 mb-2 text-muted-foreground" />
+                            <span className="font-medium">Host</span>
+                            <span className="text-xs text-muted-foreground text-center mt-1">
+                              Chcę wynajmować domki
+                            </span>
+                          </Label>
+                        </RadioGroup>
+                      </div>
+                    )}
+
+                    <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+                      {isLoading
+                        ? (isRegister ? 'Tworzę konto...' : 'Loguję...')
+                        : (isRegister ? 'Utwórz konto' : 'Zaloguj się')}
+                    </Button>
+                  </>
                 )}
-
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="jan@example.com"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className={errors.email ? 'border-destructive' : ''}
-                  />
-                  {errors.email && (
-                    <p className="text-sm text-destructive">{errors.email}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="password">Hasło</Label>
-                  <Input
-                    id="password"
-                    name="password"
-                    type="password"
-                    placeholder="••••••••"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    className={errors.password ? 'border-destructive' : ''}
-                  />
-                  {errors.password && (
-                    <p className="text-sm text-destructive">{errors.password}</p>
-                  )}
-                </div>
-
-                {isRegister && (
-                  <div className="space-y-2">
-                    <Label htmlFor="phone" className="flex items-center gap-2">
-                      <Phone className="w-4 h-4" />
-                      Telefon (opcjonalnie)
-                    </Label>
-                    <Input
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      placeholder="+48 123 456 789"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                )}
-
-                {isRegister && (
-                  <div className="space-y-3">
-                    <Label>Wybierz typ konta</Label>
-                    <RadioGroup
-                      value={formData.role}
-                      onValueChange={(value) => setFormData(prev => ({ ...prev, role: value as 'guest' | 'host' }))}
-                      className="grid grid-cols-2 gap-4"
-                    >
-                      <Label
-                        htmlFor="guest"
-                        className={`flex flex-col items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-colors ${
-                          formData.role === 'guest'
-                            ? 'border-primary bg-primary/5'
-                            : 'border-border hover:border-primary/50'
-                        }`}
-                      >
-                        <RadioGroupItem value="guest" id="guest" className="sr-only" />
-                        <User className="w-8 h-8 mb-2 text-muted-foreground" />
-                        <span className="font-medium">Gość</span>
-                        <span className="text-xs text-muted-foreground text-center mt-1">
-                          Chcę rezerwować domki
-                        </span>
-                      </Label>
-                      <Label
-                        htmlFor="host"
-                        className={`flex flex-col items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-colors ${
-                          formData.role === 'host'
-                            ? 'border-primary bg-primary/5'
-                            : 'border-border hover:border-primary/50'
-                        }`}
-                      >
-                        <RadioGroupItem value="host" id="host" className="sr-only" />
-                        <Home className="w-8 h-8 mb-2 text-muted-foreground" />
-                        <span className="font-medium">Host</span>
-                        <span className="text-xs text-muted-foreground text-center mt-1">
-                          Chcę wynajmować domki
-                        </span>
-                      </Label>
-                    </RadioGroup>
-                  </div>
-                )}
-
-                <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
-                  {isLoading
-                    ? (isRegister ? 'Tworzę konto...' : 'Loguję...')
-                    : (isRegister ? 'Utwórz konto' : 'Zaloguj się')}
-                </Button>
               </form>
+
+              {!isRecover && !isRegister && (
+                <div className="mt-4 text-center">
+                  <button type="button" onClick={() => setIsRecover(true)} className="text-sm text-primary hover:underline">Zapomniałeś hasła?</button>
+                </div>
+              )}
 
               <div className="mt-6 text-center">
                 <p className="text-sm text-muted-foreground">
