@@ -1,0 +1,232 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Fonts loaded via preload in index.html for better FCP */
+
+@layer base {
+  :root {
+    /* Nature-inspired palette */
+    --background: 40 33% 97%;
+    --foreground: 150 20% 15%;
+
+    --card: 40 30% 99%;
+    --card-foreground: 150 20% 15%;
+
+    --popover: 40 30% 99%;
+    --popover-foreground: 150 20% 15%;
+
+    /* Deep forest green */
+    --primary: 150 40% 22%;
+    --primary-foreground: 40 33% 97%;
+
+    /* Warm wood tones */
+    --secondary: 30 30% 90%;
+    --secondary-foreground: 150 20% 15%;
+
+    /* Muted sage */
+    --muted: 120 10% 92%;
+    --muted-foreground: 150 10% 40%;
+
+    /* Gold accent */
+    --accent: 38 80% 55%;
+    --accent-foreground: 150 20% 15%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 40 33% 97%;
+
+    --border: 120 10% 88%;
+    --input: 120 10% 88%;
+    --ring: 150 40% 22%;
+
+    --radius: 0.75rem;
+
+    /* Custom colors for NaOdludzie scores */
+    --score-low: 0 65% 50%;
+    --score-medium: 38 80% 50%;
+    --score-high: 142 70% 40%;
+
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(150 40% 22%) 0%, hsl(160 35% 30%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(40 30% 99%) 0%, hsl(40 25% 96%) 100%);
+    --gradient-score: linear-gradient(135deg, hsl(var(--score-high)) 0%, hsl(160 50% 35%) 100%);
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 hsl(150 20% 15% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(150 20% 15% / 0.08), 0 2px 4px -2px hsl(150 20% 15% / 0.05);
+    --shadow-lg: 0 10px 15px -3px hsl(150 20% 15% / 0.1), 0 4px 6px -4px hsl(150 20% 15% / 0.05);
+    --shadow-xl: 0 20px 25px -5px hsl(150 20% 15% / 0.1), 0 8px 10px -6px hsl(150 20% 15% / 0.05);
+    --shadow-glow: 0 0 20px hsl(150 40% 22% / 0.15);
+
+    /* Sidebar */
+    --sidebar-background: 40 30% 98%;
+    --sidebar-foreground: 150 20% 15%;
+    --sidebar-primary: 150 40% 22%;
+    --sidebar-primary-foreground: 40 33% 97%;
+    --sidebar-accent: 120 10% 92%;
+    --sidebar-accent-foreground: 150 20% 15%;
+    --sidebar-border: 120 10% 88%;
+    --sidebar-ring: 150 40% 22%;
+  }
+
+  .dark {
+    --background: 150 20% 8%;
+    --foreground: 40 20% 95%;
+
+    --card: 150 18% 12%;
+    --card-foreground: 40 20% 95%;
+
+    --popover: 150 18% 12%;
+    --popover-foreground: 40 20% 95%;
+
+    --primary: 142 50% 45%;
+    --primary-foreground: 150 20% 8%;
+
+    --secondary: 150 15% 18%;
+    --secondary-foreground: 40 20% 95%;
+
+    --muted: 150 15% 18%;
+    --muted-foreground: 120 10% 60%;
+
+    --accent: 38 80% 55%;
+    --accent-foreground: 150 20% 8%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 40 33% 97%;
+
+    --border: 150 15% 20%;
+    --input: 150 15% 20%;
+    --ring: 142 50% 45%;
+
+    --sidebar-background: 150 18% 10%;
+    --sidebar-foreground: 40 20% 95%;
+    --sidebar-primary: 142 50% 45%;
+    --sidebar-primary-foreground: 150 20% 8%;
+    --sidebar-accent: 150 15% 18%;
+    --sidebar-accent-foreground: 40 20% 95%;
+    --sidebar-border: 150 15% 20%;
+    --sidebar-ring: 142 50% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .gradient-card {
+    background: var(--gradient-card);
+  }
+
+  .gradient-score {
+    background: var(--gradient-score);
+  }
+
+  .shadow-card {
+    box-shadow: var(--shadow-md);
+  }
+
+  .shadow-card-hover {
+    box-shadow: var(--shadow-lg);
+  }
+
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.5s ease-out forwards;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.3s ease-out forwards;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Leaflet overrides */
+.leaflet-container {
+  font-family: inherit;
+  border-radius: var(--radius);
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+}
+
+.leaflet-popup-content {
+  margin: 0;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}

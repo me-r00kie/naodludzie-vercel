@@ -1,0 +1,52 @@
+project_id = "dpmnmpgjmlqvqfaapwli"
+
+[functions.analyze-offgrid]
+verify_jwt = true
+
+[functions.check-expired-cabins]
+verify_jwt = false
+
+[functions.check-expired-bookings]
+verify_jwt = false
+
+[functions.send-booking-request-email]
+verify_jwt = true
+
+[functions.send-cabin-status-email]
+verify_jwt = true
+
+[functions.notify-admin-new-cabin]
+verify_jwt = false
+
+[functions.notify-admin-new-user]
+verify_jwt = false
+
+[functions.send-contact-email]
+verify_jwt = false
+
+[functions.optimize-image]
+verify_jwt = true
+
+[functions.sync-ical-calendar]
+verify_jwt = true
+
+[functions.sync-all-calendars]
+verify_jwt = false
+
+[functions.og-metadata]
+verify_jwt = false
+
+[functions.generate-sitemap]
+verify_jwt = false
+
+[functions.create-booking-payment]
+verify_jwt = true
+
+[functions.verify-booking-payment]
+verify_jwt = false
+
+[functions.create-connect-account]
+verify_jwt = true
+
+[functions.check-connect-status]
+verify_jwt = true
