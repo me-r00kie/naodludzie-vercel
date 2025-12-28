@@ -4,11 +4,13 @@
     {
       "src": "package.json",
       "use": "@vercel/static-build",
-      "config": { "distDir": "dist" },
-      "buildEnv": {
-        "VITE_SUPABASE_URL": "@VITE_SUPABASE_URL",
-        "VITE_SUPABASE_PUBLISHABLE_KEY": "@VITE_SUPABASE_PUBLISHABLE_KEY",
-        "VITE_SUPABASE_PROJECT_ID": "@VITE_SUPABASE_PROJECT_ID"
+      "config": {
+        "distDir": "dist",
+        "env": {
+          "VITE_SUPABASE_URL": "@VITE_SUPABASE_URL",
+          "VITE_SUPABASE_PUBLISHABLE_KEY": "@VITE_SUPABASE_PUBLISHABLE_KEY",
+          "VITE_SUPABASE_PROJECT_ID": "@VITE_SUPABASE_PROJECT_ID"
+        }
       }
     }
   ],
