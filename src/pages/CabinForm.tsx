@@ -1445,3 +1445,5 @@ const CabinForm = ({ mode }: CabinFormProps) => {
 
 export const AddCabin = () => <CabinForm mode="add" />;
 export const EditCabin = () => <CabinForm mode="edit" />;
+
+export default AddCabin;
