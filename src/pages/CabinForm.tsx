@@ -146,9 +146,9 @@ const CabinForm = ({ mode }: CabinFormProps) => {
       customFees: [] as ExtraFee[],
     };
 
-    if (mode === "add") {
+    if (mode === "add" && typeof window !== "undefined") {
       try {
-        const saved = localStorage.getItem(DRAFT_STORAGE_KEY);
+        const saved = window.localStorage.getItem(DRAFT_STORAGE_KEY);
         if (saved) {
           const parsed = JSON.parse(saved);
           return {
@@ -167,7 +167,9 @@ const CabinForm = ({ mode }: CabinFormProps) => {
   };
 
   const [formData, setFormData] = useState(getInitialFormData);
-  const [hasDraft, setHasDraft] = useState(() => mode === "add" && !!localStorage.getItem(DRAFT_STORAGE_KEY));
+  const [hasDraft, setHasDraft] = useState(() =>
+    typeof window !== "undefined" ? mode === "add" && !!window.localStorage.getItem(DRAFT_STORAGE_KEY) : false
+  );
 
   const [stripeConnectStatus, setStripeConnectStatus] = useState<{
     hasAccount: boolean;
