@@ -3,21 +3,24 @@ import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
 // Vite exposes env vars via `import.meta.env.VITE_*`.
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined;
+// Provide safe fallbacks to avoid runtime failures if envs are missing at build time.
+const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL as string | undefined) ||
+  'https://pibkrnejsphllntbnrnn.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined) ||
+  'sb_publishable_k4-ZiufjxsYQYcXz9SFBPA_qLUZpF-a';
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
 const storage = typeof window !== 'undefined' ? window.localStorage : undefined;
 
-if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
-  console.warn(
-    '⚠️ Supabase environment variables missing. Ensure VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY are set.'
-  );
+// Validate URL format to avoid Supabase client throwing.
+const isValidHttpUrl = (url: string | undefined) => !!url && /^(https?:)\/\//.test(url);
+if (!isValidHttpUrl(SUPABASE_URL) || !SUPABASE_PUBLISHABLE_KEY) {
+  console.warn('⚠️ Invalid Supabase configuration. Check URL and publishable key.');
 }
 
-export const supabase = SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY
+export const supabase = isValidHttpUrl(SUPABASE_URL) && !!SUPABASE_PUBLISHABLE_KEY
   ? createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
       auth: {
         storage,
