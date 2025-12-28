@@ -82,7 +82,7 @@ This repository can be deployed to Vercel as a static export of the Next.js app.
 npm install
 ```
 
-- Build and export (produces the `out/` folder):
+ - Build (produces the `dist/` folder when using Vite):
 
 ```bash
 npm run build
@@ -91,11 +91,11 @@ npm run build
 - To deploy on Vercel:
 
 1. Create a new Vercel project and link this repository.
-2. Vercel will run `npm run build` automatically and publish the contents of the `out/` folder.
+2. Vercel will run `npm run build` automatically and publish the contents of the `dist/` folder.
 
 If you prefer to set the build command and output directory in the Vercel project settings, use:
 
 ```
 Build Command: npm run build
-Output Directory: out
+Output Directory: dist
 ```
